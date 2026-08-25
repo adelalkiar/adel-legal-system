@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم السرية — نظام العادل للخدمات القانونية</title>
+<link rel="icon" href="/assets/logo.png">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  body{background:#14100c;}
+  .admin-login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .admin-shell{display:none;min-height:100vh;background:var(--cream-2);}
+  .admin-topbar{background:linear-gradient(135deg,#1d1712,#3A2415);color:#f3e6c4;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;}
+  .admin-page{padding:24px;max-width:1100px;margin:0 auto;}
+  .stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+  @media (max-width:800px){.stat-cards{grid-template-columns:1fr 1fr;}}
+  .stat-card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;}
+  .stat-card .num{font-size:24px;font-weight:800;color:var(--brown-dark);}
+  .stat-card .lbl{font-size:12px;color:#8a7a5c;margin-top:4px;}
+  .key-generated-box{background:var(--cream);border:1px dashed var(--gold-dark);border-radius:10px;padding:14px;margin-top:14px;font-family:monospace;font-size:14px;direction:ltr;text-align:center;}
+  .status-pill{padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:700;}
+  .status-pill.active{background:var(--green-bg);color:var(--green);}
+  .status-pill.revoked{background:var(--red-bg);color:var(--red);}
+  .status-pill.expired{background:#eee;color:#888;}
+</style>
+</head>
+<body>
+
+<div id="loginWrap" class="admin-login-wrap">
+  <div class="splash-card" style="max-width:400px;">
+    <img src="/assets/logo.png" class="splash-logo" style="width:100px;height:100px;">
+    <div class="brand-title" style="font-size:20px;">لوحة تحكم العادل</div>
+    <div class="brand-sub">Admin Control Panel — سري وخاص</div>
+    <div class="activation-box" style="margin-top:20px;">
+      <h3>تسجيل الدخول</h3>
+      <div id="loginError" class="activation-error"></div>
+      <input type="password" id="adminPassInput" class="key-input" placeholder="كلمة المرور" autocomplete="off">
+      <button id="adminLoginBtn" class="btn-gold">دخول</button>
+    </div>
+  </div>
+</div>
+
+<div id="adminShell" class="admin-shell">
+  <div class="admin-topbar">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="/assets/logo.png" style="width:34px;height:34px;border-radius:50%;">
+      <strong>لوحة تحكم العادل — إدارة مفاتيح التفعيل</strong>
+    </div>
+    <button class="icon-btn" id="adminLogoutBtn">خروج</button>
+  </div>
+
+  <div class="admin-page">
+    <div class="stat-cards">
+      <div class="stat-card"><div class="num" id="statTotal">0</div><div class="lbl">إجمالي المفاتيح</div></div>
+      <div class="stat-card"><div class="num" id="statActive">0</div><div class="lbl">فعّالة</div></div>
+      <div class="stat-card"><div class="num" id="statRevoked">0</div><div class="lbl">موقوفة</div></div>
+      <div class="stat-card"><div class="num" id="statExpired">0</div><div class="lbl">منتهية</div></div>
+    </div>
+
+    <div class="card">
+      <h3>🔑 توليد مفتاح تفعيل جديد</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>مدة الصلاحية</label>
+          <select id="durationType">
+            <option value="days">عدد أيام محدد</option>
+            <option value="week">أسبوع</option>
+            <option value="month">شهر</option>
+            <option value="year">سنة</option>
+            <option value="lifetime">مؤبد (بدون انتهاء)</option>
+          </select>
+        </div>
+        <div class="form-group" id="daysGroup">
+          <label>عدد الأيام</label>
+          <input type="number" id="daysValue" min="1" value="30">
+        </div>
+        <div class="form-group">
+          <label>عدد المفاتيح</label>
+          <input type="number" id="countValue" min="1" max="50" value="1">
+        </div>
+        <div class="form-group">
+          <label>ملاحظة (اختياري)</label>
+          <input type="text" id="noteValue" placeholder="مثال: عميل شركة قرار">
+        </div>
+      </div>
+      <div class="actions-row" style="margin-top:14px;">
+        <button class="btn btn-primary" id="generateBtn">توليد المفتاح</button>
+      </div>
+      <div id="generatedBox" class="hidden"></div>
+    </div>
+
+    <div class="card">
+      <h3>📋 جميع مفاتيح التفعيل</h3>
+      <table class="data-table">
+        <thead>
+          <tr><th>المفتاح</th><th>المدة</th><th>تاريخ الإصدار</th><th>الانتهاء</th><th>الحالة</th><th>ملاحظة</th><th>إجراءات</th></tr>
+        </thead>
+        <tbody id="licensesTbody"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>⚙️ تغيير كلمة مرور لوحة التحكم</h3>
+      <div class="form-grid">
+        <div class="form-group"><label>كلمة المرور الحالية</label><input type="password" id="curPass"></div>
+        <div class="form-group"><label>كلمة المرور الجديدة</label><input type="password" id="newPass"></div>
+      </div>
+      <div class="actions-row" style="margin-top:14px;">
+        <button class="btn btn-outline" id="changePassBtn">تحديث كلمة المرور</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="/js/admin.js"></script>
+</body>
+</html>

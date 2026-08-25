@@ -1,0 +1,4 @@
+node_modules/
+db/adel.db
+db/adel.db-shm
+db/adel.db-wal

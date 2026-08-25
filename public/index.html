@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام العادل للخدمات القانونية</title>
+<link rel="icon" href="/assets/logo.png">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- ============ شاشة التفعيل ============ -->
+<div id="splashScreen" class="splash-screen">
+  <div class="splash-card">
+    <img src="/assets/logo.png" alt="شعار" class="splash-logo">
+    <div class="brand-title">نظام العادل للخدمات القانونية</div>
+    <div class="brand-sub">Al-Adel Legal Services System</div>
+    <div class="brand-programmer">برمجة: عادل العراقي</div>
+
+    <div class="activation-box">
+      <h3>الرجاء إدخال مفتاح التفعيل للمتابعة</h3>
+      <div id="actError" class="activation-error"></div>
+      <div id="actSuccess" class="activation-success"></div>
+      <input type="text" id="licenseKeyInput" class="key-input" placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off">
+      <button id="activateBtn" class="btn-gold">تفعيل الدخول</button>
+    </div>
+    <div class="splash-footer">جميع الحقوق محفوظة © نظام العادل للخدمات القانونية</div>
+  </div>
+</div>
+
+<!-- ============ التطبيق الرئيسي ============ -->
+<div id="appShell" class="app-shell hidden">
+  <div class="topbar">
+    <div class="topbar-left">
+      <img src="/assets/logo.png" class="topbar-logo" alt="شعار">
+      <div class="topbar-title">نظام العادل للخدمات القانونية
+        <small>برمجة: عادل العراقي</small>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span id="licenseChip" class="chip">—</span>
+      <button class="icon-btn" id="printBtn">🖨️ طباعة</button>
+      <button class="icon-btn" id="logoutBtn">🚪 خروج</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="invoiceTab">فاتورة جديدة</button>
+    <button class="tab-btn" data-tab="recordsTab">سجل الفواتير</button>
+    <button class="tab-btn" data-tab="lawyersTab">إدارة المحامين والقوائم</button>
+    <button class="tab-btn" data-tab="companyTab">إعدادات الشركة</button>
+  </div>
+
+  <!-- ============ تبويب: فاتورة جديدة / تحرير ============ -->
+  <div id="invoiceTab" class="page">
+    <div class="actions-row">
+      <button class="btn btn-primary" id="saveInvoiceBtn">💾 حفظ الفاتورة</button>
+      <button class="btn btn-outline" id="newInvoiceBtn">➕ فاتورة جديدة</button>
+      <span id="editingBadge" class="chip hidden" style="background:#fff;border-color:var(--gold-dark);color:var(--brown-dark);"></span>
+    </div>
+
+    <div class="invoice-sheet" id="invoiceSheet">
+      <button class="lock-toggle" id="lockToggle"><span class="dot-status"></span> <span id="lockLabel">النصوص مقفلة</span></button>
+
+      <div id="printPageNumbers" class="print-page-numbers" aria-hidden="true"></div>
+      <table class="print-flow">
+      <thead>
+        <tr><td>
+      <div id="continueHeader" class="print-continue-header">
+        <div class="pch-brand">
+          <img src="/assets/logo.png" id="pchLogo" class="pch-logo" alt="">
+          <div>
+            <div class="pch-company" id="pchCompany">اسم الشركة</div>
+            <div class="pch-title" id="pchTitle">فاتورة أتعاب وخدمات قانونية</div>
+            <div class="pch-badge" data-locktext="continue_label">تتمة الفاتورة</div>
+          </div>
+        </div>
+        <div class="pch-meta">
+          <div><span data-locktext="continue_ref_label">الرقم المرجعي</span>: <strong id="pchRef">—</strong></div>
+          <div><span data-locktext="continue_file_label">الملف / المرجع</span>: <span id="pchFile">—</span></div>
+          <div><span data-locktext="continue_client_label">العميل</span>: <span id="pchClient">—</span></div>
+        </div>
+      </div>
+        </td></tr>
+      </thead>
+      <tbody>
+      <tr><td>
+
+      <!-- ترويسة الشركة -->
+      <div class="invoice-header">
+        <div class="company-block-right">
+          <div class="company-name-ar" id="companyNameAr" data-company="name_ar">اسم الشركة</div>
+          <div class="company-tagline" id="companyTaglineAr" data-company="tagline_ar">للمحاماة والاستشارات والخدمات القانونية</div>
+        </div>
+        <div class="logo-col">
+          <img src="/assets/logo.png" id="companyLogoImg" class="company-logo-center" alt="شعار الشركة">
+        </div>
+        <div class="company-block-left">
+          <div class="company-name-en" id="companyNameEn" data-company="name_en">COMPANY NAME</div>
+          <div class="company-tagline" id="companyTaglineEn" data-company="tagline_en" style="text-align:left;">Law Firm and Legal Consultancy</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-bottom:16px;">
+        <div class="company-name-center" id="companyNameCenter" data-company="name_ar">اسم الشركة</div>
+        <div class="company-tagline-center" id="companyTaglineCenter" data-company="tagline_ar">للمحاماة والاستشارات والخدمات القانونية</div>
+      </div>
+
+      <!-- عنوان المستند + بيانات الفاتورة -->
+      <div class="doc-title-row">
+        <div>
+          <div class="doc-title-ar" data-locktext="doc_title_ar">فاتورة أتعاب وخدمات قانونية</div>
+          <div class="doc-title-en" data-locktext="doc_title_en">LEGAL FEES INVOICE</div>
+          <div class="doc-title-divider"></div>
+        </div>
+        <div class="meta-table">
+          <div class="meta-row">
+            <div class="meta-value"><input class="field-input" id="f_invoice_number" style="text-align:center;font-weight:800;"></div>
+            <div class="meta-label" data-locktext="label_invoice_number">رقم الفاتورة</div>
+          </div>
+          <div class="meta-row">
+            <div class="meta-value"><input type="date" class="field-input" id="f_issue_date" style="text-align:center;"></div>
+            <div class="meta-label" data-locktext="label_issue_date">تاريخ الإصدار</div>
+          </div>
+          <div class="meta-row">
+            <div class="meta-value"><input type="date" class="field-input" id="f_due_date" style="text-align:center;"></div>
+            <div class="meta-label" data-locktext="label_due_date">تاريخ الاستحقاق</div>
+          </div>
+          <div class="meta-row">
+            <div class="meta-value" id="currencyFieldWrap"></div>
+            <div class="meta-label" data-locktext="label_currency">العملة</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- بيانات العميل -->
+      <div class="section-title"><span class="dot"></span> <span data-locktext="section_client">بيانات العميل</span></div>
+      <div class="client-grid">
+        <div class="field-row">
+          <span class="field-label" data-locktext="label_client_name">اسم العميل</span>
+          <div class="field-input-wrap"><input class="field-input" id="f_client_name" placeholder="اسم العميل"></div>
+        </div>
+        <div class="field-row">
+          <span class="field-label" data-locktext="label_file_ref">الملف / المرجع</span>
+          <div class="field-input-wrap"><input class="field-input" id="f_file_ref" placeholder="—"></div>
+        </div>
+        <div class="field-row" id="subjectFieldRow">
+          <span class="field-label" data-locktext="label_subject">موضوع التكليف</span>
+          <div class="field-input-wrap" id="subjectFieldWrap"></div>
+        </div>
+        <div class="field-row" id="courtFieldRow">
+          <span class="field-label" data-locktext="label_court">المحكمة / الجهة</span>
+          <div class="field-input-wrap" id="courtFieldWrap"></div>
+        </div>
+        <div class="field-row" id="lawyerFieldRow">
+          <span class="field-label" data-locktext="label_lawyer">المحامي المسؤول</span>
+          <div class="field-input-wrap" id="lawyerFieldWrap"></div>
+        </div>
+        <div class="field-row">
+          <span class="field-label" data-locktext="label_address">العنوان</span>
+          <div class="field-input-wrap"><input class="field-input" id="f_address" placeholder="—"></div>
+        </div>
+      </div>
+
+      <!-- جدول الخدمات -->
+      <div class="section-title"><span class="dot"></span> <span data-locktext="section_items">تفاصيل الخدمات والأتعاب</span></div>
+      <table class="items-table" id="itemsTable">
+        <thead>
+          <tr>
+            <th style="width:34px;" data-locktext="table_no">ت</th>
+            <th data-locktext="table_service">بيان الخدمة</th>
+            <th style="width:120px;" data-locktext="table_unit_price">سعر الوحدة</th>
+            <th style="width:70px;" data-locktext="table_qty">الكمية</th>
+            <th style="width:110px;" data-locktext="table_amount">المبلغ</th>
+            <th style="width:130px;" data-locktext="table_note">ملاحظات</th>
+            <th style="width:30px;"></th>
+          </tr>
+        </thead>
+        <tbody id="itemsTbody"></tbody>
+      </table>
+      <button class="add-row-btn" id="addRowBtn">+ إضافة بند</button>
+      <div class="subtotal-bar">
+        <span id="subtotalAmount">0.00</span>
+        <span data-locktext="table_subtotal_label">الإجمالي الفرعي للأتعاب والرسوم</span>
+      </div>
+
+      <!-- حالة السداد + الملخص -->
+      <div class="two-col">
+        <div>
+          <div class="section-title"><span class="dot"></span> <span data-locktext="section_payment_status">حالة السداد</span></div>
+          <table class="status-table">
+            <tr><td data-locktext="label_invoice_status">حالة الفاتورة</td><td id="statusDisplay"><span class="status-badge unpaid">غير مسددة</span></td></tr>
+            <tr><td data-locktext="summary_total_due">إجمالي المستحق</td><td id="statusTotalDue">0.00</td></tr>
+            <tr><td data-locktext="label_paid_amount">المبلغ المدفوع</td><td><input class="field-input" style="text-align:center;" id="f_paid_amount" value="0"></td></tr>
+            <tr><td data-locktext="label_remaining">المبلغ المتبقي</td><td id="statusRemaining">0.00</td></tr>
+            <tr><td data-locktext="summary_due_date">تاريخ الاستحقاق</td><td id="statusDueDate">—</td></tr>
+            <tr><td data-locktext="label_payment_method">طريقة الدفع</td><td id="paymentMethodWrap"></td></tr>
+            <tr><td data-locktext="label_transfer_details">بيانات التحويل</td><td><input class="field-input" style="text-align:center;" id="f_transfer_details" placeholder="تزوَّد عند الطلب"></td></tr>
+          </table>
+        </div>
+        <div>
+          <div class="section-title"><span class="dot"></span> <span data-locktext="section_summary">الملخص المالي</span></div>
+          <table class="summary-table">
+            <tr><td data-locktext="summary_fees_total">إجمالي الأتعاب المهنية</td><td id="sumFeesTotal">0.00</td></tr>
+            <tr><td data-locktext="summary_fees_expenses">الرسوم والمصاريف</td><td><input class="field-input" style="text-align:left;" id="f_fees_expenses" value="0"></td></tr>
+            <tr><td data-locktext="summary_discount">الخصم</td><td><input class="field-input" style="text-align:left;" id="f_discount" value="0"></td></tr>
+            <tr class="total-row"><td data-locktext="summary_total_due">الإجمالي المستحق</td><td id="sumTotalDue">0.00</td></tr>
+            <tr class="paid-row"><td data-locktext="summary_paid">المبلغ المدفوع</td><td id="sumPaid">0.00</td></tr>
+            <tr class="remain-row"><td data-locktext="summary_remaining">المبلغ المتبقي</td><td id="sumRemaining">0.00</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- الملاحظات -->
+      <div class="section-title"><span class="dot"></span> <span data-locktext="section_notes">ملاحظات وشروط السداد</span></div>
+      <div class="notes-box" id="notesBox">
+        <ul id="notesList"></ul>
+      </div>
+
+      <!-- التوقيعات -->
+      <div class="sign-row">
+        <div class="sign-block">
+          <div class="sign-line"></div>
+          <div class="sign-label" data-locktext="footer_client_signature">توقيع العميل</div>
+        </div>
+        <div class="sign-block">
+          <div style="font-size:12px;font-weight:700;color:#7a6a4c;" data-locktext="footer_on_behalf">عن الشركة</div>
+          <div style="font-size:12px;font-weight:700;color:#7a6a4c;" data-locktext="footer_manager">المدير المفوض</div>
+          <div class="sign-line"></div>
+        </div>
+      </div>
+
+      <div class="contact-footer">
+        <span>📞 <span id="footerPhone" data-company="phone">—</span></span>
+        <span>✉️ <span id="footerEmail" data-company="email">—</span></span>
+        <span>📍 <span id="footerAddress" data-company="address">—</span></span>
+      </div>
+      </td></tr>
+      </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============ تبويب: سجل الفواتير ============ -->
+  <div id="recordsTab" class="page hidden">
+    <div class="card">
+      <h3>سجل الفواتير</h3>
+      <table class="data-table">
+        <thead>
+          <tr><th>رقم الفاتورة</th><th>التاريخ</th><th>العميل</th><th>الإجمالي</th><th>المتبقي</th><th>الحالة</th><th>إجراءات</th></tr>
+        </thead>
+        <tbody id="recordsTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============ تبويب: المحامون والقوائم ============ -->
+  <div id="lawyersTab" class="page hidden">
+    <div class="card">
+      <h3>👥 قائمة المحامين</h3>
+      <p style="font-size:12.5px;color:#8a7a5c;">أضف أسماء المحامين هنا لتصبح متاحة كخيار من متعدد في حقل "المحامي المسؤول" داخل الفاتورة.</p>
+      <div style="display:flex;gap:10px;margin-bottom:14px;">
+        <input type="text" id="newLawyerInput" placeholder="اسم المحامي الجديد" style="flex:1;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--cream);">
+        <button class="btn btn-primary" id="addLawyerBtn">إضافة</button>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>الاسم</th><th style="width:90px;">حذف</th></tr></thead>
+        <tbody id="lawyersTbody"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>📋 إدارة القوائم القابلة لإعادة الاستخدام</h3>
+      <p style="font-size:12.5px;color:#8a7a5c;">يمكن تحويل أي حقل من إدخال حر إلى قائمة منسدلة، وإضافة عناصر إليه من هنا. الحقول المتاحة: موضوع التكليف، المحكمة / الجهة، طريقة الدفع، العملة.</p>
+      <div class="form-grid" style="margin-bottom:10px;">
+        <div class="form-group">
+          <label>الحقل</label>
+          <select id="fieldSelector">
+            <option value="subject">موضوع التكليف</option>
+            <option value="court">المحكمة / الجهة</option>
+            <option value="payment_method">طريقة الدفع</option>
+            <option value="currency">العملة</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>إضافة عنصر جديد</label>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="newListItemInput" placeholder="القيمة">
+            <button class="btn btn-primary btn-sm" id="addListItemBtn">إضافة</button>
+          </div>
+        </div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>العناصر الحالية</th><th style="width:90px;">حذف</th></tr></thead>
+        <tbody id="listItemsTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============ تبويب: إعدادات الشركة ============ -->
+  <div id="companyTab" class="page hidden">
+    <div class="card">
+      <h3>🏢 تعريف الشركة / المكتب</h3>
+      <div class="form-grid">
+        <div class="form-group"><label>اسم الشركة (عربي)</label><input id="c_name_ar"></div>
+        <div class="form-group"><label>اسم الشركة (إنجليزي)</label><input id="c_name_en"></div>
+        <div class="form-group"><label>الوصف / التخصص (عربي)</label><input id="c_tagline_ar"></div>
+        <div class="form-group"><label>الوصف / التخصص (إنجليزي)</label><input id="c_tagline_en"></div>
+        <div class="form-group"><label>رقم الهاتف</label><input id="c_phone"></div>
+        <div class="form-group"><label>البريد الإلكتروني</label><input id="c_email"></div>
+        <div class="form-group"><label>العنوان</label><input id="c_address"></div>
+        <div class="form-group"><label>الموقع الإلكتروني</label><input id="c_website"></div>
+      </div>
+      <div class="form-group" style="margin-top:14px;max-width:280px;">
+        <label>شعار الشركة</label>
+        <img id="logoPreview" src="/assets/logo.png" style="width:90px;height:90px;border-radius:50%;object-fit:cover;margin-bottom:8px;">
+        <input type="file" id="logoUploadInput" accept="image/*">
+      </div>
+      <div class="actions-row" style="margin-top:16px;">
+        <button class="btn btn-primary" id="saveCompanyBtn">💾 حفظ بيانات الشركة</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- نافذة اختيار من قائمة متعددة (المحامون) -->
+<div id="multiSelectModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3 id="multiSelectTitle">اختيار</h3>
+    <div class="modal-list" id="multiSelectList"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="multiSelectCancel">إلغاء</button>
+      <button class="btn btn-primary" id="multiSelectConfirm">تأكيد</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>
